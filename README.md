@@ -31,7 +31,7 @@ The parser performs meticulous byte-level manipulations to accurately process da
   - Parses the global and packet headers.
   - Extracts the payload by removing Ethernet, IP, TCP/UDP layers.
   
-- **SimbaDecoder:**  
+- **Decoder:**  
   - Decodes market data messages from the extracted packet data.
   - Handles both incremental packet headers and a variety of market messages.
   - Outputs JSON representations of the decoded data.
@@ -58,3 +58,49 @@ You can compile the project using a command similar to:
 ```bash
 g++ -std=c++11 -O2 -o pcap_decoder main.cpp pcap_parser.cpp decoder.cpp json_writer.cpp
 ```
+
+## Using CMake
+
+If you prefer to use CMake, create a `CMakeLists.txt` file with the following content:
+
+```cmake
+cmake_minimum_required(VERSION 3.5)
+project(PCAPDecoder)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-O2")
+
+include_directories(headers)
+
+add_executable(pcap_decoder main.cpp pcap_parser.cpp decoder.cpp json_writer.cpp)
+```
+
+Then compile with:
+
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
+
+### Usage
+Once compiled, run the executable with the following command:
+```bash
+./pcap_decoder sample_input.pcap output.json
+```
+- **`sample_input.pcap`:** The PCAP file containing exchange messages.
+- **`output.json`:** The file where decoded JSON data is saved.
+
+The program decodes the PCAP file, converts market data messages to JSON, and writes the output for analysis or further processing.
+
+### Demo
+Check out the Demo Video for a walkthrough of the decoding process and the JSON output
+[![Watch the video](https://img.youtube.com/vi/03rHsjZ09R4/0.jpg)](https://youtu.be/03rHsjZ09R4)
+
+
+### License
+This project is licensed under the MIT License.
+
+### Acknowledgements
+- Thanks to the exchange documentation and message schema that informed this implementation.
+- Inspired by the need for rapid market data analysis in high-performance computing environments.
