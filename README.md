@@ -47,7 +47,7 @@ The parser performs meticulous byte-level manipulations to accurately process da
 
 ### Prerequisites
 
-- A C++ compiler that supports C++11 or later.
+- A C++ compiler that supports C++17 or later.
 - A standard build system such as Make or CMake.
 - Basic knowledge of compiling C++ projects from the command line.
 
@@ -56,7 +56,7 @@ The parser performs meticulous byte-level manipulations to accurately process da
 You can compile the project using a command similar to:
 
 ```bash
-g++ -std=c++11 -O2 -o pcap_decoder main.cpp pcap_parser.cpp decoder.cpp json_writer.cpp
+g++ -std=c++17 -O2 -o pcap_decoder main.cpp pcap_parser.cpp decoder.cpp json_writer.cpp
 ```
 
 ## Using CMake
@@ -67,7 +67,7 @@ If you prefer to use CMake, create a `CMakeLists.txt` file with the following co
 cmake_minimum_required(VERSION 3.5)
 project(PCAPDecoder)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-O2")
 
 include_directories(headers)
