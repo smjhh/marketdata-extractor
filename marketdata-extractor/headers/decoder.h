@@ -151,9 +151,9 @@ struct OrderBookSnapshot {
 
 #pragma pack(pop)
 
-class SimbaDecoder {
+class Decoder {
 public:
-	explicit SimbaDecoder(const std::vector<uint8_t>& packet_data);
+	explicit Decoder(const std::vector<uint8_t>& packet_data);
 	void decode();
 	void toJSON();
 	std::ostringstream& getJSON();

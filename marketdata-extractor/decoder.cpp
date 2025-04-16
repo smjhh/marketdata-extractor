@@ -6,11 +6,11 @@
 #include <ctime>
 #include <iostream>
 
-SimbaDecoder::SimbaDecoder(const std::vector<uint8_t>& packet_data) : packetData_(packet_data), offset(0)
+Decoder::Decoder(const std::vector<uint8_t>& packet_data) : packetData_(packet_data), offset(0)
 , marketpacketHeader{}, incrementalpacketHeader{}, snapshot{} {
 }
 
-std::string SimbaDecoder::formatTimestamp(uint64_t ns_timestamp) {
+std::string Decoder::formatTimestamp(uint64_t ns_timestamp) {
 
 	std::chrono::nanoseconds ns(ns_timestamp);
 	auto tp = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>(ns);
@@ -28,7 +28,7 @@ std::string SimbaDecoder::formatTimestamp(uint64_t ns_timestamp) {
 }
 
 
-std::string SimbaDecoder::decodeMsgFlagsTostdstring(uint16_t msgFlags) {
+std::string Decoder::decodeMsgFlagsTostdstring(uint16_t msgFlags) {
 	std::ostringstream oss;
 	oss << "{\"LastFragment\":" << ((msgFlags & (1 << 0)) ? 1 : 0) << ","
 		<< "\"StartOfSnapshot\":" << ((msgFlags & (1 << 1)) ? 1 : 0) << ","
@@ -39,7 +39,7 @@ std::string SimbaDecoder::decodeMsgFlagsTostdstring(uint16_t msgFlags) {
 	return oss.str();
 }
 
-MarketDataPacketHeader SimbaDecoder::decodeMarketDataPacketHeader() {
+MarketDataPacketHeader Decoder::decodeMarketDataPacketHeader() {
 	if (packetData_.size() < sizeof(MarketDataPacketHeader)) {
 		throw std::runtime_error("Small packet Data.");
 	}
@@ -49,7 +49,7 @@ MarketDataPacketHeader SimbaDecoder::decodeMarketDataPacketHeader() {
 	return marketpacketHeader;
 }
 
-IncrementalPacketHeader SimbaDecoder::decodeIncrementalPacketHeader() {
+IncrementalPacketHeader Decoder::decodeIncrementalPacketHeader() {
 	if (offset + sizeof(IncrementalPacketHeader) > packetData_.size()) {
 		throw std::runtime_error("Error: Incomplete IncrementalPacketHeader.");
 	}
@@ -62,7 +62,7 @@ IncrementalPacketHeader SimbaDecoder::decodeIncrementalPacketHeader() {
 
 
 
-messageHeader SimbaDecoder::decodeMessageHeader() {
+messageHeader Decoder::decodeMessageHeader() {
 	if (offset + sizeof(messageHeader) > packetData_.size()) {
 		throw std::runtime_error("Error: Incomplete Header message.");
 	}
@@ -73,7 +73,7 @@ messageHeader SimbaDecoder::decodeMessageHeader() {
 	return header;
 }
 
-OrderUpdate SimbaDecoder::decodeOrderUpdate() {
+OrderUpdate Decoder::decodeOrderUpdate() {
 
 	if (offset + sizeof(OrderUpdate) > packetData_.size()) {
 		throw std::runtime_error("Error: Incomplete OrderUpdate message");
@@ -85,7 +85,7 @@ OrderUpdate SimbaDecoder::decodeOrderUpdate() {
 	return order;
 }
 
-OrderExecution SimbaDecoder::decodeOrderExecution() {
+OrderExecution Decoder::decodeOrderExecution() {
 
 	if (offset + sizeof(OrderExecution) > packetData_.size()) {
 		throw std::runtime_error("Error: Incomplete OrderExecution message");
@@ -97,7 +97,7 @@ OrderExecution SimbaDecoder::decodeOrderExecution() {
 	return exec;
 }
 
-OrderBookSnapshot SimbaDecoder::decodeOrderBookSnapshot() {
+OrderBookSnapshot Decoder::decodeOrderBookSnapshot() {
 	if (offset + sizeof(OrderBookSnapshot) > packetData_.size()) {
 		throw std::runtime_error("Error: Incomplete OrderBook Snapshot message");
 	}
@@ -115,7 +115,7 @@ OrderBookSnapshot SimbaDecoder::decodeOrderBookSnapshot() {
 }
 
 
-void SimbaDecoder::decode() {
+void Decoder::decode() {
 	marketpacketHeader = decodeMarketDataPacketHeader();
 
 	if (marketpacketHeader.IsIncremental()) {
@@ -144,14 +144,14 @@ void SimbaDecoder::decode() {
 
 }
 
-void SimbaDecoder::AddHeaderToJSON(const messageHeader& header) {
+void Decoder::AddHeaderToJSON(const messageHeader& header) {
 	json << "{\"SBEHeader\": {\"BlockLength\":" << header.blockLength << ",";
 	json << "\"TemplateID\":" << header.templateID << ",";
 	json << "\"SchemaID\":" << header.schemaID << ",";
 	json << "\"Version\":" << header.version << "}";
 }
 
-void SimbaDecoder::toJSON() {
+void Decoder::toJSON() {
 
 	json << "{\"PacketHeader\":{";
 	json << "\"MsgSeqNum\":" << marketpacketHeader.msgSeqNum << ",";
@@ -256,6 +256,6 @@ void SimbaDecoder::toJSON() {
 
 }
 
-std::ostringstream& SimbaDecoder::getJSON() {
+std::ostringstream& Decoder::getJSON() {
 	return json;
 }

@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 		while (parser.hasMorePackets()) {
 			auto packet = parser.parseNextPacket();
 			if (!packet.empty()) {
-				SimbaDecoder decoder(packet);
+				Decoder decoder(packet);
 				decoder.decode();
 				decoder.toJSON();
 				writer.appendMessageToFile(decoder.getJSON());
